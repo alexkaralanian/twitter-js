@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser')
+const sockets2 = require('socket.io')
 
 // could use one line instead: const router = require('express').Router();
 const tweetBank = require('../tweetBank');
@@ -26,7 +27,13 @@ router.post('/tweets', function(req, res) {
   var name = req.body.name;
   var text = req.body.text;
   tweetBank.add(name, text);
+  sockets2.sockets.emit('newTweet', name+" "+text);
   res.redirect('/');
 });
 
-module.exports = router;
+// module.exports = router;
+
+module.exports = function(io){
+
+    return router;
+}

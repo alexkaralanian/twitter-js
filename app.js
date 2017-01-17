@@ -2,23 +2,20 @@ const express = require('express')
 const app = express()
 const nunjucks = require('nunjucks')
 const routes = require('./routes')
+const sockets = require('socket.io')
 
-app.listen(3000, function(){
+const server = app.listen(3000, function(){
     console.log('server listening')
 });
 
-app.use('/', routes)
+const io = sockets.listen(server)
 
 app.use('/', function(req, res, next){
     console.log(req.method + " " + req.path)
     next();
 })
 
-// app.use(function (req, res) {
-//   res.setHeader('Content-Type', 'text/plain')
-//   res.write('you posted:\n')
-//   res.end(JSON.stringify(req.body, null, 2))
-// })
+app.use('/', routes(io))
 
 
 app.engine('html', nunjucks.render)
@@ -30,6 +27,12 @@ nunjucks.render('index.html', function(err, res){
 })
 
 
+
+// app.use(function (req, res) {
+//   res.setHeader('Content-Type', 'text/plain')
+//   res.write('you posted:\n')
+//   res.end(JSON.stringify(req.body, null, 2))
+// })
 
 
 
